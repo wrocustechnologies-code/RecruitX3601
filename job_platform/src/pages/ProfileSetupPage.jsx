@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight, ChevronLeft, Check, 
   Star, GraduationCap, Briefcase, DollarSign, 
-  Calendar, Heart, Link2, FileText, Trophy, Award, User,
+  Calendar, Heart, Link2, FileText, Trophy, User,
   Calendar as CalendarIcon
 } from 'lucide-react';
-
-import * as Progress from '@radix-ui/react-progress';
+import api from '../utils/axios';
 
 import {
   BasicDetailsStep,
@@ -33,18 +32,50 @@ const steps = [
   { id: 6, title: 'Availability', subtitle: 'When can you start?', component: AvailabilityStep, icon: Calendar, color: 'from-red-500 to-pink-500' },
   { id: 7, title: 'Job Preferences', subtitle: 'Your ideal work environment', component: JobPreferencesStep, icon: Heart, color: 'from-indigo-500 to-purple-500' },
   { id: 8, title: 'Professional Links', subtitle: 'Connect your profiles', component: ProfessionalLinksStep, icon: Link2, color: 'from-cyan-500 to-blue-500' },
-    { id: 9, title: 'Interview Slots', subtitle: 'Choose your availability', component: InterviewSlotsStep, icon: CalendarIcon, color: 'from-orange-500 to-red-500' },
+  { id: 9, title: 'Interview Slots', subtitle: 'Choose your availability', component: InterviewSlotsStep, icon: CalendarIcon, color: 'from-orange-500 to-red-500' },
   { id: 10, title: 'Profile Summary', subtitle: 'Review your information', component: ProfileSummaryStep, icon: FileText, color: 'from-teal-500 to-green-500' },
-
 ];
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate();
+
   const [currentStep, setCurrentStep] = useState(0);
   const [profileData, setProfileData] = useState({});
   const [direction, setDirection] = useState(0);
 
-  const updateData = (newData) => setProfileData({ ...profileData, ...newData });
+  const userId = localStorage.getItem('userId');
+
+  /* =========================
+     🔥 API INTEGRATION HERE
+  ========================== */
+  useEffect(() => {
+    const fetchResumeData = async () => {
+      try {
+        const res = await api.get(
+          `api/resume/resume/resume/${userId}`
+        );
+
+        if (res?.data) {
+          setProfileData(prev => ({
+            ...prev,        // keep user edits
+            ...res.data     // fill from API
+          }));
+        }
+      } catch (error) {
+        console.error('Resume fetch error:', error);
+      }
+    };
+
+    if (userId) {
+      fetchResumeData();
+    }
+  }, [userId]);
+
+  /* ========================= */
+
+  const updateData = (newData) => {
+    setProfileData(prev => ({ ...prev, ...newData }));
+  };
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const CurrentStepComponent = steps[currentStep].component;
@@ -54,11 +85,13 @@ export default function ProfileSetupPage() {
     if (currentStep === steps.length - 1) {
       localStorage.setItem('profileData', JSON.stringify(profileData));
       localStorage.setItem('profileCompleted', 'true');
-      toast.success('🎉 Profile setup completed!', { description: 'Welcome to your dashboard!' });
+      toast.success('🎉 Profile setup completed!', {
+        description: 'Welcome to your dashboard!'
+      });
       navigate('/dashboard');
     } else {
       setDirection(1);
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -66,7 +99,7 @@ export default function ProfileSetupPage() {
   const handlePrevious = () => {
     if (currentStep > 0) {
       setDirection(-1);
-      setCurrentStep(currentStep - 1);
+      setCurrentStep(prev => prev - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };

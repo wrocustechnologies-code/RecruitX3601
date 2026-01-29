@@ -20,10 +20,14 @@ import InterviewSchedulingPage from "./pages/InterviewSchedulingPage";
 /* Admin */
 import AdminDashboard from "./pages/AdminDashboard";
 
+/* Candidate */
+import CandidateJobs from "./pages/CandidateJobs";
+import CandidateProfile from "./pages/CandidateProfile";
+
 /* Vendor */
 import VendorDashboard from "./pages/VendorDashboard";
 import VendorJobsPage from "./pages/VendorJobsPage";
-import VendorBenchListPage from "./pages/VendorBenchListPage";
+import VendorBenchlistPage from "./pages/VendorBenchlistPage";
 import VendorCandidatesPage from "./pages/VendorCandidatesPage";
 import VendorProfilePage from "./pages/VendorProfilePage";
 
@@ -33,6 +37,8 @@ import EndClientJobsPage from "./pages/EndClientJobsPage";
 import EndClientCandidatesPage from "./pages/EndClientCandidatesPage";
 import EndClientInterviewPage from "./pages/EndClientInterviewPage";
 import EndClientProfilePage from "./pages/EndClientProfilePage";
+import CandidateInterviews from "./pages/CandidateInterviews";
+
 
 export default function App() {
   return (
@@ -70,10 +76,16 @@ export default function App() {
           {/* Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
+        {/*   Candidate */}
+        <Route path="/candidate/jobs" element={<CandidateJobs/>}/>
+        <Route path="/candidate/profile" element={<CandidateProfile/>}/>
+        <Route path="/candidate/interviews" element={<CandidateInterviews/>}/>
+
+
           {/* Vendor */}
           <Route path="/vendor/dashboard" element={<VendorDashboard />} />
           <Route path="/vendor/jobs" element={<VendorJobsPage />} />
-          <Route path="/vendor/benchlist" element={<VendorBenchListPage />} />
+          <Route path="/vendor/benchlist" element={<VendorBenchlistPage />} />
           <Route path="/vendor/candidates" element={<VendorCandidatesPage />} />
           <Route path="/vendor/profile" element={<VendorProfilePage />} />
           <Route
